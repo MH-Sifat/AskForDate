@@ -1,0 +1,772 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>🌸 Will you go on a date with me? 💖</title>
+    <!-- Tailwind CSS  Google Fonts -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Pacifico&family=Nunito:wght@400;600;700;800;900&display=swap"
+        rel="stylesheet">
+    <!-- EmailJS SDK -->
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+    <style>
+        /* overrides & keyframes */
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Nunito', sans-serif;
+            background: linear-gradient(135deg, #fff0f5 0%, #fce4ec 40%, #ffd6e8 100%);
+            min-height: 100vh;
+            overflow-x: hidden;
+            margin: 0;
+        }
+
+        .font-pacifico {
+            font-family: 'Pacifico', cursive;
+        }
+
+        /* Floating hearts animation */
+        @keyframes floatUp {
+            0% {
+                transform: translateY(0) scale(1);
+                opacity: 1;
+            }
+
+            100% {
+                transform: translateY(-120px) scale(0.5);
+                opacity: 0;
+            }
+        }
+
+        @keyframes wiggle {
+
+            0%,
+            100% {
+                transform: rotate(-3deg);
+            }
+
+            50% {
+                transform: rotate(3deg);
+            }
+        }
+
+        @keyframes bounce-soft {
+
+            0%,
+            100% {
+                transform: translateY(0);
+            }
+
+            50% {
+                transform: translateY(-10px);
+            }
+        }
+
+        @keyframes pulse-pink {
+
+            0%,
+            100% {
+                box-shadow: 0 0 0 0 rgba(255, 105, 135, 0.4);
+            }
+
+            50% {
+                box-shadow: 0 0 0 15px rgba(255, 105, 135, 0);
+            }
+        }
+
+        @keyframes pop-in {
+            0% {
+                transform: scale(0) rotate(-10deg);
+                opacity: 0;
+            }
+
+            70% {
+                transform: scale(1.1) rotate(3deg);
+            }
+
+            100% {
+                transform: scale(1) rotate(0deg);
+                opacity: 1;
+            }
+        }
+
+        @keyframes shimmer {
+            0% {
+                background-position: -200% center;
+            }
+
+            100% {
+                background-position: 200% center;
+            }
+        }
+
+        @keyframes heartbeat {
+
+            0%,
+            100% {
+                transform: scale(1);
+            }
+
+            25% {
+                transform: scale(1.1);
+            }
+
+            50% {
+                transform: scale(1);
+            }
+
+            75% {
+                transform: scale(1.05);
+            }
+        }
+
+        .animate-wiggle {
+            animation: wiggle 1s ease-in-out infinite;
+        }
+
+        .animate-bounce-soft {
+            animation: bounce-soft 2s ease-in-out infinite;
+        }
+
+        .animate-pulse-pink {
+            animation: pulse-pink 2s ease-in-out infinite;
+        }
+
+        .animate-pop-in {
+            animation: pop-in 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+        }
+
+        .animate-heartbeat {
+            animation: heartbeat 1.5s ease-in-out infinite;
+        }
+
+        .btn-yes {
+            background: linear-gradient(135deg, #ff6b9d 0%, #ff8fab 100%);
+            transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        .btn-yes:hover {
+            transform: scale(1.08);
+            box-shadow: 0 8px 25px rgba(255, 107, 157, 0.5);
+        }
+
+        .btn-yes:active {
+            transform: scale(0.95);
+        }
+
+        /* No button initial state: inline-block, no fixed positioning */
+        .btn-no {
+            background: linear-gradient(135deg, #b0b0b0 0%, #c8c8c8 100%);
+            transition: transform 0.15s ease, left 0.2s ease, top 0.2s ease;
+            cursor: not-allowed;
+            display: inline-block;
+            position: relative;
+        }
+
+        /* When moved, it becomes fixed (added by JS) */
+        .btn-no.moved {
+            position: fixed !important;
+            z-index: 50;
+        }
+
+        .card-glow {
+            box-shadow: 0 20px 60px rgba(255, 107, 157, 0.2), 0 0 0 1px rgba(255, 182, 193, 0.3);
+        }
+
+        .shimmer-text {
+            background: linear-gradient(90deg, #ff6b9d, #ffb6c1, #ff6b9d);
+            background-size: 200% auto;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: shimmer 3s linear infinite;
+        }
+
+        .floating-heart {
+            position: absolute;
+            pointer-events: none;
+            animation: floatUp 2s ease-out forwards;
+            font-size: 1.5rem;
+            bottom: -10px;
+        }
+
+        /* SVG inner animations */
+        @keyframes eyeBlink {
+
+            0%,
+            90%,
+            100% {
+                transform: scaleY(1);
+            }
+
+            95% {
+                transform: scaleY(0.1);
+            }
+        }
+
+        @keyframes pupilMove {
+
+            0%,
+            100% {
+                transform: translate(0, 0);
+            }
+
+            25% {
+                transform: translate(-2px, 1px);
+            }
+
+            75% {
+                transform: translate(2px, 1px);
+            }
+        }
+
+        @keyframes bodyBob {
+
+            0%,
+            100% {
+                transform: translateY(0);
+            }
+
+            50% {
+                transform: translateY(-4px);
+            }
+        }
+
+        @keyframes blushPulse {
+
+            0%,
+            100% {
+                opacity: 0.5;
+            }
+
+            50% {
+                opacity: 0.8;
+            }
+        }
+
+        @keyframes happyBob {
+
+            0%,
+            100% {
+                transform: translateY(0) rotate(0deg);
+            }
+
+            25% {
+                transform: translateY(-6px) rotate(-2deg);
+            }
+
+            75% {
+                transform: translateY(-3px) rotate(2deg);
+            }
+        }
+
+        @keyframes heartFloat {
+            0% {
+                transform: translateY(0) scale(1);
+                opacity: 1;
+            }
+
+            100% {
+                transform: translateY(-40px) scale(0.5);
+                opacity: 0;
+            }
+        }
+
+        @keyframes eyeHappy {
+
+            0%,
+            85%,
+            100% {
+                transform: scaleY(1);
+            }
+
+            90% {
+                transform: scaleY(0.1);
+            }
+        }
+
+        @keyframes cheekPop {
+
+            0%,
+            100% {
+                transform: scale(1);
+            }
+
+            50% {
+                transform: scale(1.1);
+            }
+        }
+
+        .face-group {
+            animation: bodyBob 2s ease-in-out infinite;
+        }
+
+        .eye-left {
+            animation: eyeBlink 3s ease-in-out infinite;
+            transform-origin: center;
+        }
+
+        .eye-right {
+            animation: eyeBlink 3s ease-in-out 0.1s infinite;
+            transform-origin: center;
+        }
+
+        .pupil {
+            animation: pupilMove 3s ease-in-out infinite;
+        }
+
+        .blush {
+            animation: blushPulse 2s ease-in-out infinite;
+        }
+
+        .happy-face {
+            animation: happyBob 1s ease-in-out infinite;
+        }
+
+        .happy-eye-l {
+            animation: eyeHappy 2.5s ease-in-out infinite;
+            transform-origin: center;
+        }
+
+        .happy-eye-r {
+            animation: eyeHappy 2.5s ease-in-out 0.15s infinite;
+            transform-origin: center;
+        }
+
+        .cheek-l {
+            animation: cheekPop 1.5s ease-in-out infinite;
+        }
+
+        .cheek-r {
+            animation: cheekPop 1.5s ease-in-out 0.2s infinite;
+        }
+
+        .heart1 {
+            animation: heartFloat 1.5s ease-out 0s infinite;
+        }
+
+        .heart2 {
+            animation: heartFloat 1.5s ease-out 0.5s infinite;
+        }
+
+        .heart3 {
+            animation: heartFloat 1.5s ease-out 1s infinite;
+        }
+
+        /* Date type grid active style */
+        .date-type-active {
+            border-color: #f472b6 !important;
+            background-color: #fce7f3 !important;
+            color: #be185d !important;
+            transform: scale(1.02);
+            box-shadow: 0 4px 10px rgba(244, 114, 182, 0.2);
+        }
+
+        input,
+        select {
+            color-scheme: light;
+        }
+    </style>
+</head>
+
+<body class="relative">
+
+    <!-- Background Blobs -->
+    <div class="fixed inset-0 overflow-hidden pointer-events-none z-0">
+        <div class="absolute -top-20 -left-20 w-64 h-64 rounded-full bg-pink-200/30 blur-3xl"></div>
+        <div class="absolute top-1/2 -right-20 w-80 h-80 rounded-full bg-rose-200/30 blur-3xl"></div>
+        <div class="absolute -bottom-20 left-1/3 w-72 h-72 rounded-full bg-fuchsia-200/20 blur-3xl"></div>
+    </div>
+
+    <!-- Floating Hearts Container -->
+    <div id="hearts-container" class="fixed inset-0 pointer-events-none overflow-hidden z-0"></div>
+
+    <!-- ========== PAGE 1: ASK PAGE ========== -->
+    <div id="askPage" class="relative z-10 flex flex-col items-center justify-center min-h-screen px-4 transition-all">
+        <div
+            class="bg-white/80 backdrop-blur-sm rounded-3xl p-8 md:p-12 card-glow max-w-md w-full text-center animate-pop-in">
+            <div class="flex justify-center gap-2 mb-4 text-2xl">🎀 💕 🎀</div>
+            <div class="animate-bounce-soft mb-2">
+                <!-- Sad Boy SVG -->
+                <svg viewBox="0 0 200 220" xmlns="http://www.w3.org/2000/svg" class="w-48 h-48 mx-auto">
+                    <defs>
+                        <radialGradient id="faceGrad" cx="50%" cy="45%" r="50%">
+                            <stop offset="0%" stopColor="#ffe0b2" />
+                            <stop offset="100%" stopColor="#ffcc80" />
+                        </radialGradient>
+                    </defs>
+                    <g class="face-group">
+                        <path d="M60 165 Q100 155 140 165 L148 210 L52 210 Z" fill="#ff8fab" />
+                        <path d="M80 165 L85 185 L100 178 L115 185 L120 165" fill="#ff6b9d" />
+                        <path d="M80 165 Q100 158 120 165 L115 175 L100 168 L85 175 Z" fill="#fff0f5" />
+                        <rect x="88" y="152" width="24" height="18" rx="4" fill="#ffe0b2" />
+                        <circle cx="100" cy="110" r="52" fill="url(#faceGrad)" />
+                        <ellipse cx="50" cy="112" rx="10" ry="13" fill="#ffcc80" />
+                        <ellipse cx="150" cy="112" rx="10" ry="13" fill="#ffcc80" />
+                        <ellipse cx="50" cy="112" rx="6" ry="9" fill="#ffb74d" />
+                        <ellipse cx="150" cy="112" rx="6" ry="9" fill="#ffb74d" />
+                        <ellipse cx="100" cy="62" rx="50" ry="20" fill="#5d3a00" />
+                        <path d="M52 80 Q48 60 55 50 Q65 40 100 38 Q135 40 145 50 Q152 60 148 80" fill="#5d3a00" />
+                        <path d="M95 38 Q100 28 105 38" stroke="#5d3a00" strokeWidth="5" fill="none"
+                            strokeLinecap="round" />
+                        <ellipse class="blush" cx="72" cy="120" rx="14" ry="8" fill="#ffaec0" opacity="0.6" />
+                        <ellipse class="blush" cx="128" cy="120" rx="14" ry="8" fill="#ffaec0" opacity="0.6" />
+                        <g transform="translate(76, 100)">
+                            <g class="eye-left">
+                                <ellipse rx="10" ry="11" fill="white" />
+                                <g class="pupil">
+                                    <ellipse rx="6" ry="7" fill="#3e2700" />
+                                    <ellipse cx="-2" cy="-2" rx="2" ry="2" fill="white" />
+                                </g>
+                            </g>
+                            <path d="M-10 -13 Q0 -17 10 -13" stroke="#5d3a00" strokeWidth="2.5" fill="none"
+                                strokeLinecap="round" />
+                        </g>
+                        <g transform="translate(124, 100)">
+                            <g class="eye-right">
+                                <ellipse rx="10" ry="11" fill="white" />
+                                <g class="pupil">
+                                    <ellipse rx="6" ry="7" fill="#3e2700" />
+                                    <ellipse cx="-2" cy="-2" rx="2" ry="2" fill="white" />
+                                </g>
+                            </g>
+                            <path d="M-10 -13 Q0 -17 10 -13" stroke="#5d3a00" strokeWidth="2.5" fill="none"
+                                strokeLinecap="round" />
+                        </g>
+                        <path d="M88 130 Q100 124 112 130" stroke="#c0666e" strokeWidth="2.5" fill="none"
+                            strokeLinecap="round" />
+                        <ellipse cx="100" cy="118" rx="5" ry="3.5" fill="#ffb74d" />
+                        <path d="M140 88 Q143 83 146 88 Q146 93 143 93 Q140 93 140 88 Z" fill="#80d8ff" opacity="0.8" />
+                    </g>
+                </svg>
+            </div>
+            <h1 class="font-pacifico text-3xl md:text-4xl shimmer-text mb-3 leading-tight">Will you go on a<br>date with
+                me? 🥺</h1>
+            <p class="text-pink-400 font-semibold text-lg mb-8">Pretty please? 🌸</p>
+            <div class="flex justify-center gap-6">
+                <button id="yesButton"
+                    class="btn-yes text-white font-extrabold text-xl px-10 py-4 rounded-full shadow-lg animate-pulse-pink">Yes!
+                    💖</button>
+                <button id="noButton"
+                    class="btn-no text-white font-extrabold text-lg px-8 py-4 rounded-full shadow-md select-none">No
+                    😒</button>
+            </div>
+            <p class="text-pink-300 text-sm mt-6 italic">(The no button is a little shy 🙈)</p>
+        </div>
+    </div>
+
+    <!-- ========== PAGE 2: PLAN PAGE ========== -->
+    <div id="planPage" class="hidden relative z-10 flex flex-col items-center justify-center min-h-screen px-4 py-8">
+        <div class="bg-white/85 backdrop-blur-sm rounded-3xl p-8 md:p-10 card-glow max-w-md w-full animate-pop-in">
+            <div class="flex justify-center gap-2 mb-4 text-2xl">💖 🎉 💖</div>
+            <div class="animate-heartbeat mb-2">
+                <!-- Happy Boy SVG -->
+                <svg viewBox="0 0 200 220" xmlns="http://www.w3.org/2000/svg" class="w-48 h-48 mx-auto">
+                    <defs>
+                        <radialGradient id="faceGradH" cx="50%" cy="45%" r="50%">
+                            <stop offset="0%" stopColor="#ffe0b2" />
+                            <stop offset="100%" stopColor="#ffcc80" />
+                        </radialGradient>
+                    </defs>
+                    <text class="heart1" x="20" y="70" fontSize="16" opacity="0.8">💕</text>
+                    <text class="heart2" x="158" y="60" fontSize="14" opacity="0.8">💖</text>
+                    <text class="heart3" x="12" y="50" fontSize="12" opacity="0.7">✨</text>
+                    <g class="happy-face">
+                        <path d="M60 165 Q100 155 140 165 L148 210 L52 210 Z" fill="#ff6b9d" />
+                        <path d="M80 165 L85 185 L100 178 L115 185 L120 165" fill="#ff8fab" />
+                        <path d="M80 165 Q100 158 120 165 L115 175 L100 168 L85 175 Z" fill="#fff0f5" />
+                        <rect x="88" y="152" width="24" height="18" rx="4" fill="#ffe0b2" />
+                        <circle cx="100" cy="110" r="52" fill="url(#faceGradH)" />
+                        <ellipse cx="50" cy="112" rx="10" ry="13" fill="#ffcc80" />
+                        <ellipse cx="150" cy="112" rx="10" ry="13" fill="#ffcc80" />
+                        <ellipse cx="50" cy="112" rx="6" ry="9" fill="#ffb74d" />
+                        <ellipse cx="150" cy="112" rx="6" ry="9" fill="#ffb74d" />
+                        <ellipse cx="100" cy="62" rx="50" ry="20" fill="#5d3a00" />
+                        <path d="M52 80 Q48 60 55 50 Q65 40 100 38 Q135 40 145 50 Q152 60 148 80" fill="#5d3a00" />
+                        <path d="M95 38 Q100 25 105 38" stroke="#5d3a00" strokeWidth="5" fill="none"
+                            strokeLinecap="round" />
+                        <path d="M66 87 Q76 82 86 87" stroke="#5d3a00" strokeWidth="2.5" fill="none"
+                            strokeLinecap="round" />
+                        <path d="M114 87 Q124 82 134 87" stroke="#5d3a00" strokeWidth="2.5" fill="none"
+                            strokeLinecap="round" />
+                        <ellipse class="cheek-l" cx="72" cy="120" rx="16" ry="10" fill="#ff8fab" opacity="0.7" />
+                        <ellipse class="cheek-r" cx="128" cy="120" rx="16" ry="10" fill="#ff8fab" opacity="0.7" />
+                        <g transform="translate(76, 100)">
+                            <g class="happy-eye-l">
+                                <ellipse rx="10" ry="11" fill="white" />
+                                <ellipse ry="7" rx="6" fill="#3e2700" />
+                                <ellipse cx="-2" cy="-2" rx="2" ry="2" fill="white" />
+                            </g>
+                        </g>
+                        <g transform="translate(124, 100)">
+                            <g class="happy-eye-r">
+                                <ellipse rx="10" ry="11" fill="white" />
+                                <ellipse ry="7" rx="6" fill="#3e2700" />
+                                <ellipse cx="-2" cy="-2" rx="2" ry="2" fill="white" />
+                            </g>
+                        </g>
+                        <path d="M82 124 Q100 142 118 124" stroke="#c0666e" strokeWidth="3" fill="#ff9aa2"
+                            strokeLinecap="round" />
+                        <ellipse cx="100" cy="118" rx="5" ry="3.5" fill="#ffb74d" />
+                        <ellipse cx="100" cy="136" rx="7" ry="5" fill="#ff6b9d" />
+                    </g>
+                </svg>
+            </div>
+            <h2 class="font-pacifico text-2xl md:text-3xl shimmer-text text-center mb-2">Yay! Let's plan it! 🎊</h2>
+            <p class="text-pink-400 text-center font-semibold mb-6">This is going to be amazing! ✨</p>
+
+            <div class="mb-5">
+                <label class="block text-pink-600 font-bold mb-2 text-sm">📅 Pick a date</label>
+                <input type="date" id="datePicker" min=""
+                    class="w-full border-2 border-pink-200 rounded-2xl px-4 py-3 text-pink-700 font-semibold focus:outline-none focus:border-pink-400 bg-pink-50/50 transition-all">
+            </div>
+            <div class="mb-5">
+                <label class="block text-pink-600 font-bold mb-2 text-sm">🕐 What time?</label>
+                <select id="timeSelect"
+                    class="w-full border-2 border-pink-200 rounded-2xl px-4 py-3 text-pink-700 font-semibold focus:outline-none focus:border-pink-400 bg-pink-50/50 transition-all">
+                    <option value="">Choose a time...</option>
+                    <option>10:00 AM</option>
+                    <option>11:00 AM</option>
+                    <option>12:00 PM</option>
+                    <option>1:00 PM</option>
+                    <option>2:00 PM</option>
+                    <option>3:00 PM</option>
+                    <option>4:00 PM</option>
+                    <option>5:00 PM</option>
+                    <option>6:00 PM</option>
+                    <option>7:00 PM</option>
+                    <option>8:00 PM</option>
+                    <option>9:00 PM</option>
+                </select>
+            </div>
+            <div class="mb-7">
+                <label class="block text-pink-600 font-bold mb-2 text-sm">🌸 What kind of date?</label>
+                <div id="dateTypeGrid" class="grid grid-cols-2 gap-2"></div>
+            </div>
+            <button id="submitPlanBtn"
+                class="btn-yes w-full text-white font-extrabold text-xl py-4 rounded-2xl shadow-lg">It's a Date!
+                💕</button>
+        </div>
+    </div>
+
+    <!-- ========== PAGE 3: SUCCESS PAGE ========== -->
+    <div id="successPage" class="hidden relative z-10 flex flex-col items-center justify-center min-h-screen px-4 py-8">
+        <div
+            class="bg-white/85 backdrop-blur-sm rounded-3xl p-8 md:p-12 card-glow max-w-md w-full text-center animate-pop-in">
+            <div class="text-5xl mb-2 animate-bounce">🎊</div>
+            <div class="animate-wiggle">
+                <svg viewBox="0 0 200 220" xmlns="http://www.w3.org/2000/svg" class="w-48 h-48 mx-auto">
+                    <!-- happy boy SVG will be injected via JS -->
+                </svg>
+            </div>
+            <h2 class="font-pacifico text-3xl shimmer-text mb-3 mt-2">It's Official! 🥳</h2>
+            <p class="text-pink-500 font-bold text-lg mb-6">I literally cannot stop smiling right now! 😊💕</p>
+            <div id="successDetails"
+                class="bg-gradient-to-br from-pink-50 to-rose-50 border-2 border-pink-200 rounded-2xl p-5 mb-6 text-left">
+            </div>
+            <div class="text-4xl mb-4 flex justify-center gap-2 animate-bounce-soft">💕 🌸 💕</div>
+            <p class="text-pink-400 italic font-semibold text-sm">Counting down the minutes already! 🥰<br>You just made
+                me the happiest person ever!</p>
+            <div class="mt-6 text-3xl">🎀 💖 🎊 💖 🎀</div>
+        </div>
+    </div>
+
+    <script>
+        // ---------- YOUR EmailJS CONFIGURATION ----------
+        // 🔴 REPLACE THESE THREE VALUES WITH YOUR OWN FROM THE EmailJS DASHBOARD 🔴
+        const EMAILJS_PUBLIC_KEY = "Yc_PpXGOZm6tXdrej";   // from Account > API Keys
+        const EMAILJS_SERVICE_ID = "service_1ab3gvm";   // from Email Services page
+        const EMAILJS_TEMPLATE_ID = "template_w6rdqlh"; // from Email Templates page
+        // 🔴 --------------------------------------------------------- 🔴
+
+        // Initialize EmailJS
+        emailjs.init({
+            publicKey: EMAILJS_PUBLIC_KEY,
+        });
+
+        // ---------- Helper Functions ----------
+        const dateTypes = [
+            { value: 'cafe', label: '☕ Cozy Café Date' },
+            { value: 'picnic', label: '💖 Romantic Picnic' },
+            { value: 'movie', label: '🎬 Movie Night' },
+            { value: 'lunch', label: '🍝 Lunch Date' },
+            { value: 'dinner', label: '🍽 Candlelit Dinner' },
+            { value: 'amusement', label: '🎡 Park Date' },
+            { value: 'cooking', label: '🚶‍♂️ Walking Date' },
+            { value: 'rickshaw', label: '🛺 Rickshaw Date' },
+        ];
+      
+        let selectedDateType = '';
+
+        // Floating hearts generator
+        function startFloatingHearts() {
+            const container = document.getElementById('hearts-container');
+            const emojis = ['💕', '💖', '💗', '💓', '✨', '🌸', '🎀'];
+            setInterval(() => {
+                const heart = document.createElement('div');
+                heart.className = 'floating-heart';
+                heart.style.left = Math.random() * 80 + 10 + '%';
+                heart.style.animationDuration = 2 + Math.random() * 2 + 's';
+                heart.innerText = emojis[Math.floor(Math.random() * emojis.length)];
+                container.appendChild(heart);
+                setTimeout(() => heart.remove(), 2500);
+            }, 700);
+        }
+
+        // Page switching
+        function showPage(pageName) {
+            document.getElementById('askPage').classList.add('hidden');
+            document.getElementById('planPage').classList.add('hidden');
+            document.getElementById('successPage').classList.add('hidden');
+            if (pageName === 'ask') document.getElementById('askPage').classList.remove('hidden');
+            if (pageName === 'plan') document.getElementById('planPage').classList.remove('hidden');
+            if (pageName === 'success') document.getElementById('successPage').classList.remove('hidden');
+        }
+
+        // moving No button logic - now toggles 'moved' class to apply fixed positioning
+        function setupNoButton() {
+            const noBtn = document.getElementById('noButton');
+            let moveTimeout = false;
+            function moveButton() {
+                if (moveTimeout) return;
+                moveTimeout = true;
+                // Add the 'moved' class to switch to fixed positioning
+                noBtn.classList.add('moved');
+                const w = window.innerWidth;
+                const h = window.innerHeight;
+                let newX = Math.random() * (w - 130);
+                let newY = Math.random() * (h - 70);
+                newX = Math.max(10, Math.min(w - 130, newX));
+                newY = Math.max(10, Math.min(h - 70, newY));
+                noBtn.style.left = newX + 'px';
+                noBtn.style.top = newY + 'px';
+                setTimeout(() => { moveTimeout = false; }, 200);
+            }
+            noBtn.addEventListener('mouseenter', moveButton);
+            noBtn.addEventListener('touchstart', moveButton);
+            noBtn.addEventListener('click', (e) => { e.preventDefault(); moveButton(); });
+        }
+
+        // Render plan page date type grid
+        function renderDateTypeGrid() {
+            const grid = document.getElementById('dateTypeGrid');
+            grid.innerHTML = '';
+            dateTypes.forEach(dt => {
+                const btn = document.createElement('button');
+                btn.innerText = dt.label;
+                btn.className = 'px-3 py-2.5 rounded-xl text-sm font-bold border-2 border-pink-100 bg-white/70 text-pink-500 hover:border-pink-300 transition-all';
+                btn.dataset.value = dt.value;
+                btn.addEventListener('click', () => {
+                    document.querySelectorAll('#dateTypeGrid button').forEach(b => {
+                        b.classList.remove('date-type-active');
+                        b.classList.add('border-pink-100', 'bg-white/70', 'text-pink-500');
+                    });
+                    btn.classList.add('date-type-active');
+                    btn.classList.remove('border-pink-100', 'bg-white/70', 'text-pink-500');
+                    selectedDateType = dt.value;
+                });
+                grid.appendChild(btn);
+            });
+        }
+
+        // Submit plan & send email via EmailJS
+        async function submitPlan() {
+            const date = document.getElementById('datePicker').value;
+            const time = document.getElementById('timeSelect').value;
+            if (!date || !time || !selectedDateType) {
+                alert('Please fill in all fields! 🌸');
+                return;
+            }
+            const dateDetails = { date, time, dateType: selectedDateType };
+            const dateTypeLabel = getDateTypeLabel(selectedDateType);
+
+            // Send email via EmailJS
+            try {
+                const templateParams = {
+                    date: formatDate(date),
+                    time: time,
+                    dateType: dateTypeLabel,
+                };
+
+                const response = await emailjs.send(
+                    EMAILJS_SERVICE_ID,
+                    EMAILJS_TEMPLATE_ID,
+                    templateParams
+                );
+                console.log('✅ Email sent successfully!', response);
+            } catch (error) {
+                console.error('❌ Email sending failed:', error);
+                alert("Oops! Couldn't send the email, but your date is still saved locally. 💕");
+            }
+
+            // Also save to localStorage as fallback (optional)
+            localStorage.setItem('dateDetails', JSON.stringify(dateDetails));
+
+            // Show success page
+            showSuccessPage(dateDetails);
+        }
+
+        function formatDate(dateStr) {
+            const d = new Date(dateStr + 'T00:00:00');
+            return d.toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+        }
+
+        function getDateTypeLabel(value) {
+            const found = dateTypes.find(dt => dt.value === value);
+            return found ? found.label : value;
+        }
+
+        function showSuccessPage(details) {
+            const container = document.getElementById('successDetails');
+            container.innerHTML = `
+        <h3 class="text-pink-600 font-extrabold text-sm uppercase tracking-wide mb-3">📋 Our Date Details</h3>
+        <div class="space-y-2">
+          <div class="flex items-center gap-2"><span class="text-lg">📅</span><span class="text-pink-700 font-bold">${formatDate(details.date)}</span></div>
+          <div class="flex items-center gap-2"><span class="text-lg">🕐</span><span class="text-pink-700 font-bold">${details.time}</span></div>
+          <div class="flex items-center gap-2"><span class="text-lg">💝</span><span class="text-pink-700 font-bold">${getDateTypeLabel(details.dateType)}</span></div>
+        </div>
+      `;
+            showPage('success');
+        }
+
+        // Inject happy boy SVG into success page
+        function injectSuccessBoy() {
+            const happySvgMarkup = `<defs><radialGradient id="faceGradH" cx="50%" cy="45%" r="50%"><stop offset="0%" stopColor="#ffe0b2"/><stop offset="100%" stopColor="#ffcc80"/></radialGradient></defs>
+      <text class="heart1" x="20" y="70" fontSize="16" opacity="0.8">💕</text>
+      <text class="heart2" x="158" y="60" fontSize="14" opacity="0.8">💖</text>
+      <text class="heart3" x="12" y="50" fontSize="12" opacity="0.7">✨</text>
+      <g class="happy-face"><path d="M60 165 Q100 155 140 165 L148 210 L52 210 Z" fill="#ff6b9d"/><path d="M80 165 L85 185 L100 178 L115 185 L120 165" fill="#ff8fab"/><path d="M80 165 Q100 158 120 165 L115 175 L100 168 L85 175 Z" fill="#fff0f5"/><rect x="88" y="152" width="24" height="18" rx="4" fill="#ffe0b2"/><circle cx="100" cy="110" r="52" fill="url(#faceGradH)"/><ellipse cx="50" cy="112" rx="10" ry="13" fill="#ffcc80"/><ellipse cx="150" cy="112" rx="10" ry="13" fill="#ffcc80"/><ellipse cx="50" cy="112" rx="6" ry="9" fill="#ffb74d"/><ellipse cx="150" cy="112" rx="6" ry="9" fill="#ffb74d"/><ellipse cx="100" cy="62" rx="50" ry="20" fill="#5d3a00"/><path d="M52 80 Q48 60 55 50 Q65 40 100 38 Q135 40 145 50 Q152 60 148 80" fill="#5d3a00"/><path d="M95 38 Q100 25 105 38" stroke="#5d3a00" strokeWidth="5" fill="none" strokeLinecap="round"/><path d="M66 87 Q76 82 86 87" stroke="#5d3a00" strokeWidth="2.5" fill="none" strokeLinecap="round"/><path d="M114 87 Q124 82 134 87" stroke="#5d3a00" strokeWidth="2.5" fill="none" strokeLinecap="round"/><ellipse class="cheek-l" cx="72" cy="120" rx="16" ry="10" fill="#ff8fab" opacity="0.7"/><ellipse class="cheek-r" cx="128" cy="120" rx="16" ry="10" fill="#ff8fab" opacity="0.7"/><g transform="translate(76, 100)"><g class="happy-eye-l"><ellipse rx="10" ry="11" fill="white"/><ellipse ry="7" rx="6" fill="#3e2700"/><ellipse cx="-2" cy="-2" rx="2" ry="2" fill="white"/></g></g><g transform="translate(124, 100)"><g class="happy-eye-r"><ellipse rx="10" ry="11" fill="white"/><ellipse ry="7" rx="6" fill="#3e2700"/><ellipse cx="-2" cy="-2" rx="2" ry="2" fill="white"/></g></g><path d="M82 124 Q100 142 118 124" stroke="#c0666e" strokeWidth="3" fill="#ff9aa2" strokeLinecap="round"/><ellipse cx="100" cy="118" rx="5" ry="3.5" fill="#ffb74d"/><ellipse cx="100" cy="136" rx="7" ry="5" fill="#ff6b9d"/></g>`;
+            const successSvg = document.querySelector('#successPage svg');
+            if (successSvg) successSvg.innerHTML = happySvgMarkup;
+        }
+
+        // Initialize min date for date picker
+        function setMinDate() {
+            const today = new Date().toISOString().split('T')[0];
+            document.getElementById('datePicker').min = today;
+        }
+
+        // Event listeners and initialization
+        document.addEventListener('DOMContentLoaded', () => {
+            startFloatingHearts();
+            setupNoButton();
+            renderDateTypeGrid();
+            setMinDate();
+            injectSuccessBoy();
+
+            document.getElementById('yesButton').addEventListener('click', () => {
+                showPage('plan');
+            });
+
+            document.getElementById('submitPlanBtn').addEventListener('click', submitPlan);
+
+            showPage('ask');
+        });
+    </script>
+</body>
+
+</html>
